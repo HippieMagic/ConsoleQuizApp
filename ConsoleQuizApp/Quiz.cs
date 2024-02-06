@@ -8,7 +8,7 @@ namespace ConsoleQuizApp
 {
     internal class Quiz
     {
-        private readonly List<QuizQuestion> _questions;
+        private List<QuizQuestion> _questions;
         //private int _currentQuestionIndex = 0;
 
         public Quiz(string filePath)
@@ -79,22 +79,62 @@ namespace ConsoleQuizApp
             return questions;
         }
 
-        public void Start()
+        //public void Start(int numOfQuestions)
+        //{
+        //    foreach (var question in _questions)
+        //    {
+        //        Console.WriteLine(question.QuestionText);
+
+        //        for (var i = 0; i < question.Answers.Count; i++)
+        //        {
+        //            Console.WriteLine($"{i + 1}. {question.Answers[i]}");
+        //        }
+
+        //        Console.WriteLine("Enter the correct answer number:");
+        //        var userAnswer = Convert.ToInt32(Console.ReadLine());
+
+        //        Console.WriteLine(userAnswer - 1 == question.CorrectAnswerIndex ? "Correct!" : "Incorrect.");
+        //    }
+        //}
+
+        public void Start(int numOfQuestions)
         {
-            foreach (var question in _questions)
+            Random rnd = new Random();
+            _questions = _questions.OrderBy(q => rnd.Next()).ToList();
+            int askedQuestions = 0;
+            int correctAnswers = 0;
+
+            foreach (var question in _questions.Take(numOfQuestions))
             {
                 Console.WriteLine(question.QuestionText);
-
                 for (var i = 0; i < question.Answers.Count; i++)
                 {
                     Console.WriteLine($"{i + 1}. {question.Answers[i]}");
                 }
 
-                Console.WriteLine("Enter the correct answer number:");
-                var userAnswer = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Enter the number of the correct answer:");
+                if (!int.TryParse(Console.ReadLine(), out var userAnswer) || userAnswer < 1 || userAnswer > question.Answers.Count)
+                {
+                    Console.WriteLine("Invalid input. Please enter a number from the list of answers.");
+                    continue;
+                }
 
-                Console.WriteLine(userAnswer - 1 == question.CorrectAnswerIndex ? "Correct!" : "Incorrect.");
+                if (userAnswer - 1 == question.CorrectAnswerIndex)
+                {
+                    Console.WriteLine("Correct!");
+                    correctAnswers++;
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect.");
+                }
+
+                askedQuestions++;
             }
+
+            // Display summary
+            Console.WriteLine($"Quiz completed. Questions asked: {askedQuestions}, Correct answers: {correctAnswers}, Accuracy: {(double)correctAnswers / askedQuestions * 100}%");
         }
+
     }
 }
