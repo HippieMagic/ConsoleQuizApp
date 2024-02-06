@@ -6,7 +6,9 @@ namespace ConsoleQuizApp
     {
         static void Main(string[] args)
         {
-            var quiz = new Quiz(@"C:\Users\nick_\Downloads\sample.q");
+            Console.WriteLine("Please enter your file location: ");
+            var userAnswer = Convert.ToString(Console.ReadLine());
+            var quiz = new Quiz(userAnswer);
             quiz.Start();
         }
     }

@@ -8,8 +8,8 @@ namespace ConsoleQuizApp
 {
     internal class Quiz
     {
-        private List<QuizQuestion> _questions;
-        private int _currentQuestionIndex = 0;
+        private readonly List<QuizQuestion> _questions;
+        //private int _currentQuestionIndex = 0;
 
         public Quiz(string filePath)
         {
@@ -18,37 +18,36 @@ namespace ConsoleQuizApp
 
         private List<QuizQuestion> LoadQuestionsFromFile(string filePath)
         {
-            // Implement the file reading and parsing logic here
-            // Refer to the previous example for parsing logic
-            // ...
             var questions = new List<QuizQuestion>();
             var lines = File.ReadAllLines(filePath);
 
             QuizQuestion currentQuestion = null;
-            bool isReadingQuestion = false;
-            bool isReadingAnswers = false;
+            var isReadingQuestion = false;
+            var isReadingAnswers = false;
 
             foreach (var line in lines)
             {
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("*"))
                     continue; // Skip comments and blank lines
 
-                if (line.StartsWith("@QUESTION"))
+                if (line.StartsWith("@Q"))
                 {
                     isReadingQuestion = true;
-                    currentQuestion = new QuizQuestion();
-                    currentQuestion.Answers = new List<string>();
+                    currentQuestion = new QuizQuestion
+                    {
+                        Answers = new List<string>()
+                    };
                     continue;
                 }
 
-                if (line.StartsWith("@ANSWERS"))
+                if (line.StartsWith("@A"))
                 {
                     isReadingQuestion = false;
                     isReadingAnswers = true;
                     continue;
                 }
 
-                if (line.StartsWith("@END"))
+                if (line.StartsWith("@E"))
                 {
                     isReadingAnswers = false;
                     questions.Add(currentQuestion);
@@ -61,13 +60,14 @@ namespace ConsoleQuizApp
                 }
                 else if (isReadingAnswers)
                 {
-                    if (int.TryParse(line, out int correctAnswer))
+                    if (int.TryParse(line, out var correctAnswer))
                     {
-                        currentQuestion.CorrectAnswerIndex = correctAnswer - 1; // Assuming answers are 1-indexed
+                        if (currentQuestion != null)
+                            currentQuestion.CorrectAnswerIndex = correctAnswer - 1; // Assuming answers are 1-indexed
                     }
                     else
                     {
-                        currentQuestion.Answers.Add(line);
+                        currentQuestion?.Answers.Add(line);
                     }
                 }
             }
@@ -84,22 +84,16 @@ namespace ConsoleQuizApp
             foreach (var question in _questions)
             {
                 Console.WriteLine(question.QuestionText);
-                foreach (var answer in question.Answers)
+
+                for (var i = 0; i < question.Answers.Count; i++)
                 {
-                    Console.WriteLine(answer);
+                    Console.WriteLine($"{i + 1}. {question.Answers[i]}");
                 }
 
                 Console.WriteLine("Enter the correct answer number:");
                 var userAnswer = Convert.ToInt32(Console.ReadLine());
 
-                if (userAnswer == question.CorrectAnswerIndex + 1)
-                {
-                    Console.WriteLine("Correct!");
-                }
-                else
-                {
-                    Console.WriteLine("Incorrect.");
-                }
+                Console.WriteLine(userAnswer - 1 == question.CorrectAnswerIndex ? "Correct!" : "Incorrect.");
             }
         }
     }
