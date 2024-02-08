@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ConsoleQuizApp
+﻿namespace ConsoleQuizApp
 {
     internal class Program
     {

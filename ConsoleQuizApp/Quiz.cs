@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace ConsoleQuizApp
 {
@@ -43,6 +42,7 @@ namespace ConsoleQuizApp
             }
             catch (Exception e)
             {
+                // Log the error and start a new quiz
                 Console.WriteLine("Error reading file at: " + filePath);
                 StartNewQuiz();
             }
