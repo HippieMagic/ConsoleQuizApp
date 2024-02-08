@@ -9,17 +9,43 @@ namespace ConsoleQuizApp
     internal class Quiz
     {
         private List<QuizQuestion> _questions;
-        //private int _currentQuestionIndex = 0;
 
         public Quiz(string filePath)
         {
             _questions = LoadQuestionsFromFile(filePath);
         }
 
+        public Quiz()
+        {
+
+        }
+
+        public void StartNewQuiz()
+        {
+            Console.WriteLine("Please enter your file location: ");
+            var userAnswer = Convert.ToString(Console.ReadLine());
+            var quiz = new Quiz(userAnswer);
+
+            Console.WriteLine("How many questions would you like to answer?");
+            var numOfQuestions = Convert.ToInt32(Console.ReadLine());
+            quiz.Start(numOfQuestions);
+        }
+
         private List<QuizQuestion> LoadQuestionsFromFile(string filePath)
         {
             var questions = new List<QuizQuestion>();
-            var lines = File.ReadAllLines(filePath);
+            string[] lines = null;
+            
+            // make sure the file exists and weed out junk responses
+            try
+            {
+                lines = File.ReadAllLines(filePath);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error reading file at: " + filePath);
+                StartNewQuiz();
+            }
 
             QuizQuestion currentQuestion = null;
             var isReadingQuestion = false;
@@ -73,36 +99,18 @@ namespace ConsoleQuizApp
             }
 
             // Randomize the questions
-            Random rnd = new Random();
+            var rnd = new Random();
             questions = questions.OrderBy(q => rnd.Next()).ToList();
 
             return questions;
         }
 
-        //public void Start(int numOfQuestions)
-        //{
-        //    foreach (var question in _questions)
-        //    {
-        //        Console.WriteLine(question.QuestionText);
-
-        //        for (var i = 0; i < question.Answers.Count; i++)
-        //        {
-        //            Console.WriteLine($"{i + 1}. {question.Answers[i]}");
-        //        }
-
-        //        Console.WriteLine("Enter the correct answer number:");
-        //        var userAnswer = Convert.ToInt32(Console.ReadLine());
-
-        //        Console.WriteLine(userAnswer - 1 == question.CorrectAnswerIndex ? "Correct!" : "Incorrect.");
-        //    }
-        //}
-
         public void Start(int numOfQuestions)
         {
-            Random rnd = new Random();
+            var rnd = new Random();
             _questions = _questions.OrderBy(q => rnd.Next()).ToList();
-            int askedQuestions = 0;
-            int correctAnswers = 0;
+            var askedQuestions = 0;
+            var correctAnswers = 0;
 
             foreach (var question in _questions.Take(numOfQuestions))
             {
@@ -129,6 +137,11 @@ namespace ConsoleQuizApp
                     Console.WriteLine("Incorrect.");
                 }
 
+                if (askedQuestions == numOfQuestions)
+                {
+                    break;
+                }
+                
                 askedQuestions++;
             }
 
