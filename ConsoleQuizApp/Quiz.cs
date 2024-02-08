@@ -22,8 +22,9 @@ namespace ConsoleQuizApp
         public void StartNewQuiz()
         {
             Console.WriteLine("Please enter your file location: ");
+            // strip any quotes from the file path
             var userAnswer = Convert.ToString(Console.ReadLine());
-            var quiz = new Quiz(userAnswer);
+            var quiz = new Quiz(userAnswer?.Replace("\"", ""));
 
             Console.WriteLine("How many questions would you like to answer?");
             var numOfQuestions = Convert.ToInt32(Console.ReadLine());
