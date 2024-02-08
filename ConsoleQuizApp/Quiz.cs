@@ -162,6 +162,9 @@ namespace ConsoleQuizApp
 
             // Display summary
             Console.WriteLine($"Quiz completed. Questions asked: {askedQuestions}, Correct answers: {correctAnswers}, Accuracy: {(double)correctAnswers / askedQuestions * 100}%");
+            // hold the console open
+            Console.WriteLine("Press enter to exit.");
+            Console.ReadLine();
         }
 
     }
